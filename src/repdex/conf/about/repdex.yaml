@@ -1,0 +1,6 @@
+_open_link_: False
+name: "Repdex"
+authors: "Young Joon Lee <entelecheia@hotmail.com>"
+description: "An AI-driven approach to measure corporate and CEO reputation using Aspect-Based Sentiment Analysis on news articles"
+homepage: "https://repdex.entelecheia.ai"
+license: "MIT"

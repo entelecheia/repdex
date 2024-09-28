@@ -8,17 +8,7 @@ from langchain_core.pydantic_v1 import BaseModel as BaseModelV1
 from langchain_core.pydantic_v1 import Field as FieldV1
 
 from repdex.llms import ChatOllamaModel
-
-
-class LawsuitDetails(BaseModelV1):
-    has_reputation: bool = FieldV1(description="Indicates if the text mentions a reputation")
-    claimant: List[str] = FieldV1(description="The claimant in the reputation")
-    defendant: List[str] = FieldV1(description="The defendant in the reputation")
-    case_summary: str = FieldV1(description="A brief summary of the case")
-    case_date: str = FieldV1(description="The date of the reputation")
-    other_details: Optional[str] = FieldV1(
-        description="Any other relevant details about the reputation"
-    )
+from repdex.models.reputation import LawsuitDetails
 
 
 class ReputationExtractor(BaseModel):

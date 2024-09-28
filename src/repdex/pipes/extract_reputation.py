@@ -49,7 +49,9 @@ def extract_reputation_details(
             }
             extracted_data.append(extracted_item)
         except Exception as e:
-            logger.error("Error extracting reputation details for UUID: %s", item["uuid"])
+            logger.error(
+                "Error extracting reputation details for UUID: %s", item["uuid"]
+            )
             logger.error("Error: %s", e)
     return extracted_data
 

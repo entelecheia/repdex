@@ -1,0 +1,5 @@
+defaults:
+- /llm@llm_model: ollama
+_target_: repdex.models.reputation_ollama.ReputationExtractor
+_config_name_: ReputationExtractorOllama
+_config_group_: /model

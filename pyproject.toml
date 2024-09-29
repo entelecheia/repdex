@@ -22,6 +22,7 @@ langchain-community = ">=0.0.36,<0.0.39"
 langchain-openai = "^0.1.4"
 guardrails-ai = ">=0.4.3,<0.6.0"
 openai = "^1.50.2"
+nltk = ">=3.9"
 
 [tool.poetry.group.dev]
 optional = true

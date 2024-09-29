@@ -8,7 +8,7 @@ from langchain_core.pydantic_v1 import BaseModel as BaseModelV1
 from langchain_core.pydantic_v1 import Field as FieldV1
 
 from repdex.llms import ChatOllamaModel
-from repdex.models.reputation import LawsuitDetails
+from repdex.models.reputation import ReputationDetails
 from repdex.models.tests import test_input
 
 
@@ -49,11 +49,11 @@ class ReputationExtractor(BaseModel):
     def chain(self):
         return self.prompt | self.engine | self.output_parser
 
-    def extract(self, input_text: str) -> LawsuitDetails:
+    def extract(self, input_text: str) -> ReputationDetails:
         return self.chain.invoke({"text": input_text})
 
     def _create_output_parser(self) -> PydanticOutputParser:
-        return PydanticOutputParser(pydantic_object=LawsuitDetails)
+        return PydanticOutputParser(pydantic_object=ReputationDetails)
 
     def _create_prompt(self):
         reputation_template = """

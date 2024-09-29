@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class ChatConfig(BaseModel):
-    model: str = "gpt-4-turbo"
+    model: str = "gpt-4o"
     temperature: float = 0.0
 
 

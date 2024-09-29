@@ -1,10 +1,11 @@
 from typing import List, Optional
-from pydantic import BaseModel as PydanticBaseModel
+
+from hyfi.composer import BaseModel
 from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.chat_models import ChatOpenAI
+from pydantic import BaseModel as PydanticBaseModel
 
-from hyfi.composer import BaseModel
 from repdex.llms import ChatOpenAIModel
 from repdex.models.tests import test_input
 

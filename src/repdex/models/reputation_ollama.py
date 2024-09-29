@@ -6,7 +6,7 @@ from langchain.prompts import ChatPromptTemplate
 from langchain_community.chat_models import ChatOllama
 
 from repdex.llms import ChatOllamaModel
-from repdex.models.reputation import ReputationDetails, ReputationAspect
+from repdex.models.reputation import ReputationAspect, ReputationDetails
 from repdex.models.tests import test_input
 
 

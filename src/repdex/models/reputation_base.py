@@ -92,5 +92,14 @@ class BaseReputationExtractor(BaseModel):
         )
 
     def extract(self, input_text: str) -> List[ReputationAspect]:
+        """
+        Extract reputation aspects from the given input text.
+
+        Args:
+            input_text (str): The text to analyze for reputation aspects.
+
+        Returns:
+            List[ReputationAspect]: A list of extracted reputation aspects.
+        """
         result = self.chain.invoke({"text": input_text})
         return result.aspects or []

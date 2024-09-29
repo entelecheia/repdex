@@ -9,13 +9,13 @@ logger = logging.getLogger(__name__)
 
 
 class ChatConfig(BaseModel):
-    model: str = "llama3"
+    model: str = "gemma2:27b"
     temperature: float = 0.0
 
 
 class ChatEnv(Env):
     OLLAMA_BASE_URL: Optional[str] = Field(
-        exclude=True, default="http://localhost:11434"
+        exclude=True, default="http://172.16.229.32:11436"
     )
 
 

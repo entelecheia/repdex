@@ -1,0 +1,5 @@
+defaults:
+- /llm@llm_model: openai
+_target_: repdex.models.reputation.ReputationExtractor
+_config_name_: ReputationExtractor
+_config_group_: /model

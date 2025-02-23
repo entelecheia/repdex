@@ -1,139 +1,155 @@
-.PHONY: install
-install: install-uv ## Install the virtual environment and install the pre-commit hooks
-	@echo "🚀 Creating virtual environment using uv"
+# Default values for variables
+IMAGE_VARIANT ?= dev
+DOCKER_PROJECT_ID ?= default
+DOCKER_SCRIPT := .docker/.docker-scripts/docker-compose.sh
+
+# Define common functions
+define log
+	@echo "🚀 $(1)"
+endef
+
+define run_docker
+	@IMAGE_VARIANT=$(IMAGE_VARIANT) DOCKER_PROJECT_ID=$(DOCKER_PROJECT_ID) bash $(DOCKER_SCRIPT) $(1)
+endef
+
+# Mark all targets as PHONY
+.PHONY: help install check test build clean-build publish build-and-publish docs-test docs \
+        install-uv install-pipx install-copier init-project reinit-project reinit-docker-project \
+        docker-build docker-config docker-push docker-run docker-up docker-up-detach docker-tag docker-down docker-clean
+
+#######################
+# Development Setup   #
+#######################
+
+install: install-uv ## Install the virtual environment and pre-commit hooks
+	$(call log,Creating virtual environment using uv)
 	@uv sync
 	@uv run pre-commit install
 
-.PHONY: check
-check: ## Run code quality tools.
-	@echo "🚀 Checking lock file consistency with 'pyproject.toml'"
+install-uv: ## Install uv (pre-requisite for initialize)
+	$(call log,Installing uv)
+	@command -v uv &> /dev/null || curl -LsSf https://astral.sh/uv/install.sh | sh || true
+
+install-pipx: ## Install pipx (pre-requisite for external tools)
+	$(call log,Installing pipx)
+	@command -v pipx &> /dev/null || pip install --user pipx || true
+
+install-copier: install-pipx ## Install copier (pre-requisite for init-project)
+	$(call log,Installing copier)
+	@command -v copier &> /dev/null || pipx install copier || true
+
+#######################
+# Quality Assurance   #
+#######################
+
+check: ## Run code quality tools
+	$(call log,Checking lock file consistency with 'pyproject.toml')
 	@uv lock --locked
-	@echo "🚀 Linting code: Running pre-commit"
+	$(call log,Linting code: Running pre-commit)
 	@uv run pre-commit run -a
-	@echo "🚀 Static type checking: Running mypy"
+	$(call log,Static type checking: Running mypy)
 	@uv run mypy --config-file pyproject.toml src
-	@echo "🚀 Checking for obsolete dependencies: Running deptry"
+	$(call log,Checking for obsolete dependencies: Running deptry)
 	@uv run deptry .
 
-.PHONY: test
 test: ## Test the code with pytest
-	@echo "🚀 Testing code: Running pytest"
+	$(call log,Testing code: Running pytest)
 	@uv run python -m pytest --cov --cov-config=pyproject.toml --cov-report=xml --junitxml=tests/pytest.xml | tee tests/pytest-coverage.txt
 
-.PHONY: build
+#######################
+# Build & Publish     #
+#######################
+
 build: clean-build ## Build wheel file
-	@echo "🚀 Creating wheel file"
+	$(call log,Creating wheel file)
 	@uvx --from build pyproject-build --installer uv
 
-.PHONY: clean-build
 clean-build: ## Clean build artifacts
-	@echo "🚀 Removing build artifacts"
+	$(call log,Removing build artifacts)
 	@uv run python -c "import shutil; import os; shutil.rmtree('dist') if os.path.exists('dist') else None"
 
-.PHONY: publish
-publish: ## Publish a release to PyPI.
-	@echo "🚀 Publishing."
+publish: ## Publish a release to PyPI
+	$(call log,Publishing to PyPI)
 	@uvx twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
 
-.PHONY: build-and-publish
-build-and-publish: build publish ## Build and publish.
+build-and-publish: build publish ## Build and publish
 
-.PHONY: docs-test
+#######################
+# Documentation       #
+#######################
+
 docs-test: ## Test if documentation can be built without warnings or errors
 	@uv run mkdocs build -s
 
-.PHONY: docs
 docs: ## Build and serve the documentation
 	@uv run mkdocs serve
 
-.PHONY: install-uv
-install-uv: ## Install uv (pre-requisite for initialize)
-	@echo "🚀 Installing uv"
-	@command -v uv &> /dev/null || curl -LsSf https://astral.sh/uv/install.sh | sh || true
+#######################
+# Project Management  #
+#######################
 
-.PHONY: install-pipx
-install-pipx: ## Install pipx (pre-requisite for external tools)
-	@echo "🚀 Installing pipx"
-	@command -v pipx &> /dev/null || pip install --user pipx || true
-
-.PHONY: install-copier
-install-copier: install-pipx ## Install copier (pre-requisite for init-project)
-	@echo "🚀 Installing copier"
-	@command -v copier &> /dev/null || pipx install copier || true
-
-.PHONY: init-project
 init-project: initialize ## Initialize the project (Warning: do this only once!)
-	@echo "🚀 Initializing project from template"
+	$(call log,Initializing project from template)
 	@copier copy --trust --answers-file .copier-config.yaml gh:entelecheia/hyperfast-uv-template .
 
-.PHONY: reinit-project
 reinit-project: install-copier ## Reinitialize the project (Warning: this may overwrite existing files!)
-	@echo "🚀 Reinitializing project from template"
-	@bash -c 'args=(); while IFS= read -r file; do args+=("--skip" "$$file"); done < .copierignore; copier copy --trust "$${args[@]}" --answers-file .copier-config.yaml gh:entelecheia/hyperfast-uv-template .'
+	$(call log,Reinitializing project from template)
+	@bash -c 'args=(); while IFS= read -r file; do args+=("--skip" "$$file"); done < .copierignore; \
+		copier copy --trust "$${args[@]}" --answers-file .copier-config.yaml gh:entelecheia/hyperfast-uv-template .'
 
-.PHONY: reinit-docker-project
 reinit-docker-project: install-copier ## Reinitialize the docker project (Warning: this may overwrite existing files!)
-	@echo "🚀 Reinitializing docker project from template"
-	@bash -c 'args=(); while IFS= read -r file; do args+=("--skip" "$$file"); done < .copierignore; copier copy --trust "$${args[@]}" --answers-file .copier-docker-config.yaml gh:entelecheia/hyperfast-docker-template .'
+	$(call log,Reinitializing docker project from template)
+	@bash -c 'args=(); while IFS= read -r file; do args+=("--skip" "$$file"); done < .copierignore; \
+		copier copy --trust "$${args[@]}" --answers-file .copier-docker-config.yaml gh:entelecheia/hyperfast-docker-template .'
 
-.PHONY: docker-build docker-config docker-push docker-run docker-up docker-up-detach docker-tag docker-down docker-clean
+#######################
+# Docker Operations   #
+#######################
 
 docker-build: ## Build the Docker image (variant: IMAGE_VARIANT, default: dev)
-	@echo "🚀 Building Docker image"
-	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
-	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
-	bash .docker/.docker-scripts/docker-compose.sh build
+	$(call log,Building Docker image)
+	$(call run_docker,build)
 
 docker-config: ## Show the Docker Compose configuration
-	@echo "🚀 Showing Docker Compose configuration"
-	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
-	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
-	bash .docker/.docker-scripts/docker-compose.sh config
+	$(call log,Showing Docker Compose configuration)
+	$(call run_docker,config)
 
 docker-push: ## Push the Docker image to registry
-	@echo "🚀 Pushing Docker image"
-	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
-	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
-	bash .docker/.docker-scripts/docker-compose.sh push
+	$(call log,Pushing Docker image)
+	$(call run_docker,push)
 
 docker-run: ## Run a command in the Docker container (default: bash)
-	@echo "🚀 Running Docker container"
-	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
-	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
-	bash .docker/.docker-scripts/docker-compose.sh run
+	$(call log,Running Docker container)
+	$(call run_docker,run)
 
 docker-up: ## Start the Docker container
-	@echo "🚀 Starting Docker container"
-	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
-	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
-	bash .docker/.docker-scripts/docker-compose.sh up
+	$(call log,Starting Docker container)
+	$(call run_docker,up)
 
 docker-up-detach: ## Start the Docker container in detached mode
-	@echo "🚀 Starting Docker container in detached mode"
-	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
-	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
-	bash .docker/.docker-scripts/docker-compose.sh up --detach
+	$(call log,Starting Docker container in detached mode)
+	$(call run_docker,up --detach)
 
 docker-down: ## Stop and remove the Docker container
-	@echo "🚀 Stopping and removing Docker container"
-	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
-	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
-	bash .docker/.docker-scripts/docker-compose.sh down
+	$(call log,Stopping and removing Docker container)
+	$(call run_docker,down)
 
 docker-tag: ## Tag the Docker image as latest
-	@echo "🚀 Tagging Docker image as latest"
-	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
-	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
-	bash .docker/.docker-scripts/docker-compose.sh tag
+	$(call log,Tagging Docker image as latest)
+	$(call run_docker,tag)
 
 docker-clean: ## Remove all Docker artifacts (images, containers, volumes)
-	@echo "🚀 Removing all Docker artifacts (images, containers, volumes)"
-	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
-	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
-	bash .docker/.docker-scripts/docker-compose.sh down -v --rmi all
+	$(call log,Removing all Docker artifacts)
+	$(call run_docker,down -v --rmi all)
 
-.PHONY: help
-help:
+#######################
+# Help                #
+#######################
+
+help: ## Show this help message
+	@echo "Usage: make [target]"
+	@echo ""
+	@echo "Available targets:"
 	@uv run python -c "import re; \
 	[[print(f'\033[36m{m[0]:<25}\033[0m {m[1]}') for m in re.findall(r'^([a-zA-Z_-]+):.*?## (.*)$$', open(makefile).read(), re.M)] for makefile in ('$(MAKEFILE_LIST)').strip().split()]"
 

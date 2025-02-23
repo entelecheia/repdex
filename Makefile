@@ -76,6 +76,62 @@ reinit-docker-project: install-copier ## Reinitialize the docker project (Warnin
 	@echo "🚀 Reinitializing docker project from template"
 	@bash -c 'args=(); while IFS= read -r file; do args+=("--skip" "$$file"); done < .copierignore; copier copy --trust "$${args[@]}" --answers-file .copier-docker-config.yaml gh:entelecheia/hyperfast-docker-template .'
 
+.PHONY: docker-build docker-config docker-push docker-run docker-up docker-up-detach docker-tag docker-down docker-clean
+
+docker-build: ## Build the Docker image (variant: IMAGE_VARIANT, default: dev)
+	@echo "🚀 Building Docker image"
+	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
+	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
+	bash .docker/.docker-scripts/docker-compose.sh build
+
+docker-config: ## Show the Docker Compose configuration
+	@echo "🚀 Showing Docker Compose configuration"
+	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
+	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
+	bash .docker/.docker-scripts/docker-compose.sh config
+
+docker-push: ## Push the Docker image to registry
+	@echo "🚀 Pushing Docker image"
+	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
+	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
+	bash .docker/.docker-scripts/docker-compose.sh push
+
+docker-run: ## Run a command in the Docker container (default: bash)
+	@echo "🚀 Running Docker container"
+	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
+	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
+	bash .docker/.docker-scripts/docker-compose.sh run
+
+docker-up: ## Start the Docker container
+	@echo "🚀 Starting Docker container"
+	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
+	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
+	bash .docker/.docker-scripts/docker-compose.sh up
+
+docker-up-detach: ## Start the Docker container in detached mode
+	@echo "🚀 Starting Docker container in detached mode"
+	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
+	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
+	bash .docker/.docker-scripts/docker-compose.sh up --detach
+
+docker-down: ## Stop and remove the Docker container
+	@echo "🚀 Stopping and removing Docker container"
+	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
+	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
+	bash .docker/.docker-scripts/docker-compose.sh down
+
+docker-tag: ## Tag the Docker image as latest
+	@echo "🚀 Tagging Docker image as latest"
+	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
+	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
+	bash .docker/.docker-scripts/docker-compose.sh tag
+
+docker-clean: ## Remove all Docker artifacts (images, containers, volumes)
+	@echo "🚀 Removing all Docker artifacts (images, containers, volumes)"
+	@IMAGE_VARIANT=$${IMAGE_VARIANT:-"dev"} \
+	DOCKER_PROJECT_ID=$${DOCKER_PROJECT_ID:-"default"} \
+	bash .docker/.docker-scripts/docker-compose.sh down -v --rmi all
+
 .PHONY: help
 help:
 	@uv run python -c "import re; \

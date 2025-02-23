@@ -14,9 +14,7 @@ class ChatConfig(BaseModel):
 
 
 class ChatEnv(Env):
-    OLLAMA_BASE_URL: Optional[str] = Field(
-        exclude=True, default="http://172.16.229.32:11436"
-    )
+    OLLAMA_BASE_URL: Optional[str] = Field(exclude=True, default="http://172.16.229.32:11436")
 
 
 class ChatOllamaModel(BaseModel):

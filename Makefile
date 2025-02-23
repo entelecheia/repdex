@@ -70,6 +70,12 @@ init-project: initialize ## Initialize the project (Warning: do this only once!)
 reinit-project: install-copier ## Reinitialize the project (Warning: this may overwrite existing files!)
 	@echo "🚀 Reinitializing project from template"
 	@bash -c 'args=(); while IFS= read -r file; do args+=("--skip" "$$file"); done < .copierignore; copier copy --trust "$${args[@]}" --answers-file .copier-config.yaml gh:entelecheia/hyperfast-uv-template .'
+
+.PHONY: reinit-docker-project
+reinit-docker-project: install-copier ## Reinitialize the docker project (Warning: this may overwrite existing files!)
+	@echo "🚀 Reinitializing docker project from template"
+	@bash -c 'args=(); while IFS= read -r file; do args+=("--skip" "$$file"); done < .copierignore; copier copy --trust "$${args[@]}" --answers-file .copier-docker-config.yaml gh:entelecheia/hyperfast-docker-template .'
+
 .PHONY: help
 help:
 	@uv run python -c "import re; \

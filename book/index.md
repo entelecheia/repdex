@@ -8,7 +8,7 @@
 [![codecov][codecov-image]][codecov-url]
 
 <!-- Links: -->
-[hyperfast python template]: https://github.com/entelecheia/hyperfast-python-template
+[hyperfast python template]: https://github.com/entelecheia/hyperfast-uv-template
 
 [codecov-image]: https://codecov.io/gh/entelecheia/repdex/branch/main/graph/badge.svg?token=IluWv2HY3z
 [codecov-url]: https://codecov.io/gh/entelecheia/repdex

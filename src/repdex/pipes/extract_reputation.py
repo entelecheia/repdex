@@ -17,9 +17,7 @@ def assign_uuids(data: List[Dict]) -> List[Dict]:
     return data
 
 
-def extract_reputation_details(
-    data: List[Dict], extractor: ReputationExtractor
-) -> List[Dict]:
+def extract_reputation_details(data: List[Dict], extractor: ReputationExtractor) -> List[Dict]:
     extracted_data = []
     for item in tqdm(data):
         try:
@@ -30,9 +28,7 @@ def extract_reputation_details(
                     item["uuid"],
                 )
                 continue
-            logger.info(
-                "Extracting reputation details from item with UUID: %s", item["uuid"]
-            )
+            logger.info("Extracting reputation details from item with UUID: %s", item["uuid"])
             reputation_details = extractor.extract(text)
             if not reputation_details.has_reputation:
                 logger.info("No reputation found in item with UUID: %s", item["uuid"])
@@ -49,9 +45,7 @@ def extract_reputation_details(
             }
             extracted_data.append(extracted_item)
         except Exception as e:
-            logger.error(
-                "Error extracting reputation details for UUID: %s", item["uuid"]
-            )
+            logger.error("Error extracting reputation details for UUID: %s", item["uuid"])
             logger.error("Error: %s", e)
     return extracted_data
 
@@ -60,7 +54,6 @@ def extract(
     scraped_data_file: str = "scraped_data.json",
     extracted_data_file: str = "extracted_reputation_data.json",
 ):
-
     extractor = ReputationExtractor()
 
     # Load scraped press release data

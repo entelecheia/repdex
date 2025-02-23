@@ -1,10 +1,10 @@
 # Changes here will be overwritten by Copier; do NOT edit manually
-_commit: v0.14.5
-_src_path: gh:entelecheia/hyperfast-python-template
+_commit: v0.3.3
+_src_path: gh:entelecheia/hyperfast-uv-template
 author: Young Joon Lee
 build_and_release: true
-code_template_answers_file: .copier-hyfi-config.yaml
-code_template_source: gh:entelecheia/hyfi-template
+code_template_answers_file: .copier-code-config.yaml
+code_template_source: ''
 codecov_graph_token: IluWv2HY3z
 copyright_year: 2024
 documentaion_tool: jupyter-book
@@ -21,9 +21,6 @@ open_link: false
 package_name: repdex
 package_scripts:
 - repdex = 'repdex.__cli__:main'
-poe_task_files:
-- .tasks.toml
-- .tasks-extra.toml
 project_description: Repdex is an innovative project that leverages advanced language
     models like GPT-4o, Claude 3.5, or Llama 3.1 through LangChain to perform Aspect-Based
     Sentiment Analysis (ABSA) on news articles. It aims to quantify and analyze the
@@ -33,8 +30,10 @@ project_license: MIT
 project_name: repdex
 project_short_description: An AI-driven approach to measure corporate and CEO reputation
     using Aspect-Based Sentiment Analysis on news articles
+python_version: '3.11'
 upload_to_release: true
 upload_to_repository: true
 use_launch_buttons: true
 use_source_code_skeleton: true
+uv_version: latest
 

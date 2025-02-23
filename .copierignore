@@ -1,2 +1,4 @@
 .copierignore
 CHANGELOG.md
+Makefile
+pyproject.toml

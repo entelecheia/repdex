@@ -106,17 +106,9 @@ reinit-docker-project: install-copier ## Reinitialize the docker project (Warnin
 # Docker Operations   #
 #######################
 
-docker-build: ## Build the Docker image (variant: IMAGE_VARIANT, default: dev)
-	$(call log,Building Docker image)
-	$(call run_docker,build)
-
 docker-config: ## Show the Docker Compose configuration
 	$(call log,Showing Docker Compose configuration)
 	$(call run_docker,config)
-
-docker-push: ## Push the Docker image to registry
-	$(call log,Pushing Docker image)
-	$(call run_docker,push)
 
 docker-run: ## Run a command in the Docker container (default: bash)
 	$(call log,Running Docker container)
@@ -133,10 +125,6 @@ docker-up-detach: ## Start the Docker container in detached mode
 docker-down: ## Stop and remove the Docker container
 	$(call log,Stopping and removing Docker container)
 	$(call run_docker,down)
-
-docker-tag: ## Tag the Docker image as latest
-	$(call log,Tagging Docker image as latest)
-	$(call run_docker,tag)
 
 docker-clean: ## Remove all Docker artifacts (images, containers, volumes)
 	$(call log,Removing all Docker artifacts)

@@ -1,32 +1,11 @@
 services:
   # Defines a service name
   workspace:
-    build:
-      # Sets the build context to the current directory
-      context: .
-      # Specifies the Dockerfile to use for the build
-      dockerfile: .docker/Dockerfile.dev
-      # Specifies build-time variables (ARGs)
-      args:
-        ARG_BUILD_FROM: $BUILD_FROM
-        ARG_USERNAME: $CONTAINER_USERNAME
-        ARG_USER_UID: $CONTAINER_USER_UID
-        ARG_USER_GID: $CONTAINER_USER_GID
-        ARG_WORKSPACE_ROOT: $CONTAINER_WORKSPACE_ROOT
-        ARG_USER_FULLNAME: $CONTAINER_USER_FULLNAME
-        ARG_USER_EMAIL: $CONTAINER_USER_EMAIL
-        ARG_GITHUB_USERNAME: $GITHUB_USERNAME
-        ARG_SYSTEM_HOSTNAME: $CONTAINER_HOSTNAME
-        ARG_WORKSPACE_LOCATION: $CONTAINER_WORKSPACE_LOCATION
-        ARG_DOTFILES_VERSION: $DOTFILES_VERSION
-        ARG_APP_INSTALL_ROOT: $APP_INSTALL_ROOT
-        ARG_APP_DIRNAME: $APP_DIRNAME
-        ARG_CONTAINER_SERVICE_NAME: $CONTAINER_SERVICE_NAME
     # Sets the image name for the built image
-    image: $IMAGE_NAME:$IMAGE_TAG
+    image: ghcr.io/entelecheia/devcon:0.4.1-ubuntu-22.04
     # Sets the hostname of the container
     hostname: $CONTAINER_HOSTNAME
-    
+
     # Sets tty to true if the container needs a pseudo-TTY
     tty: true
     stdin_open: true
